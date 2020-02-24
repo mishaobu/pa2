@@ -186,7 +186,7 @@ int toHashTable(int x, Node** hashTable, MinHeap &h) {
 
 int deleteFromHeap(int n) { return 0;}
 
-int deleteFromHashTable(int x, Node** hashTable, Node* minHeap) { 
+int deleteFromHashTable(int x, Node** hashTable, MinHeap &minHeap) { 
     int index = modulo(x,43);
     int value;
     if (hashTable[index] == NULL) {
@@ -204,27 +204,27 @@ int deleteFromHashTable(int x, Node** hashTable, Node* minHeap) {
             }
             if (curr->value == x) {
                 if (curr->count > 1) {
-                    curr->count -=1;
+                    //curr->count -=1;
                     return 0;
                 } 
                 else {
                     if (curr->next) {
                         if (prev) {
                             prev->next = curr->next;
-                            deleteFromHeap(curr->locInHeap);
+                            //deleteFromHeap(curr->locInHeap);
                             value = curr->value;
                             return value;
                         } 
                         else {
                             hashTable[index] = curr->next;
-                            deleteFromHeap(curr->locInHeap);
+                            //deleteFromHeap(curr->locInHeap);
                             value = curr->value;
                             return value;
                         }
                     }
                     else {
                         hashTable[index] = NULL;
-                        deleteFromHeap(curr->locInHeap);
+                        //deleteFromHeap(curr->locInHeap);
                         value = curr->value;
                         return value; 
                     }            
@@ -269,7 +269,7 @@ void MinHeap::printHeap() {
     for (int i = 0; i < heap_size; i++) {
         cout << harr[i]->value << " ";
     }
-    if(heap_size > 0) cout << endl;
+    cout << endl;
 }
 
 void MinHeap::printHeapIndex() {
@@ -292,17 +292,21 @@ void doOperation(string op, int n, Node** hashTable, MinHeap &h) {
         h.printHeap();
     } 
     else if (op == "deleteMin"|| op == " deleteMin") {
-        h.extractMin();
+        Node* n = h.extractMin();
+        if (n) deleteFromHashTable(n->value, hashTable, h);
     }
     else if (op =="delete"|| op == " delete") {
         Node* result = findInHashTable(n, hashTable);
-        cout <<"hey wat up" << endl;
+        //cout <<"hey wat up" << result->value << endl;
         if (result == NULL) cout << "item not present in the table" << endl;
         else if (result->count > 1) {
             result->count -= 1;
             cout << "item successfully deleted" << endl;
         }
-        else if (result->count == 1) h.deleteKey(result->locInHeap);
+        else if (result->count == 1) {
+            h.deleteKey(result->locInHeap);
+            deleteFromHashTable(n, hashTable, h);
+        }
     }
     else if (op == "printLocs") {
         h.printHeapIndex();
