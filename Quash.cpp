@@ -40,6 +40,7 @@ public:
     void printHeap();
     void printHeapIndex();
     void deleteKey(int i);
+    void orderHeap();
     Node* extractMin(int store_val, bool b); 
   
     // Returns the minimum key (key at root) from min heap 
@@ -55,6 +56,12 @@ MinHeap::MinHeap(int cap) {
     for (int i = 0; i<cap; i++) harr[i] = NULL;
 } 
   
+
+void MinHeap::orderHeap() {
+    for (int i = 0; i < heap_size; i++) {
+        harr[i]->locInHeap = i;
+    }
+}
 // Inserts a new key 'k' 
 void MinHeap::insertKey(Node* k) { 
     if (heap_size == capacity) { 
@@ -190,7 +197,7 @@ int deleteFromHashTable(int x, Node** hashTable, MinHeap &minHeap) {
     int index = modulo(x,43);
     int value;
     if (hashTable[index] == NULL) {
-        cout << "Key doesn't exist in table" << endl;
+        //cout << "Key doesn't exist in table" << endl;
         return -1;
     } 
     else {
@@ -199,7 +206,7 @@ int deleteFromHashTable(int x, Node** hashTable, MinHeap &minHeap) {
 
         while(curr){
             if (!curr) {
-                cout << "Key doesn't exist in table" << endl;
+                //cout << "Key doesn't existgirg in table" << endl;
                 return -1;
             }
             if (curr->value == x) {
@@ -292,19 +299,23 @@ void doOperation(string op, int n, Node** hashTable, MinHeap &h) {
         h.printHeap();
     } 
     else if (op == "deleteMin"|| op == " deleteMin") {
+        h.orderHeap();
         Node* n = h.extractMin();
         if (n) deleteFromHashTable(n->value, hashTable, h);
     }
     else if (op =="delete"|| op == " delete") {
+        h.orderHeap();
         Node* result = findInHashTable(n, hashTable);
         //cout <<"hey wat up" << result->value << endl;
         if (result == NULL) cout << "item not present in the table" << endl;
         else if (result->count > 1) {
             result->count -= 1;
-            cout << "item successfully deleted" << endl;
+            cout << "item successfully decremented, new count = " << result->count << endl;
         }
         else if (result->count == 1) {
+            //cout << result->locInHeap << endl;
             h.deleteKey(result->locInHeap);
+
             deleteFromHashTable(n, hashTable, h);
         }
     }
@@ -313,6 +324,7 @@ void doOperation(string op, int n, Node** hashTable, MinHeap &h) {
     }
     else { "error wtf"; }
 }
+
 
 int main(int argc, char* argv[]) {
     Node* hashTable[43];
